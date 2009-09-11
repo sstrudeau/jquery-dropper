@@ -1,0 +1,5 @@
+This is a work in progress -- coming soon
+
+"Eye dropper"-style color picker: pick a color from an image
+
+Uses canvas; IE not supported

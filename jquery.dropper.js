@@ -1,92 +1,135 @@
+// TODO license?
 (function($) {
 	$.fn.dropper = function(settings) {
 
+		// TODO Q: pass other args to callbacks? Event propagation in callbacks?
     var config = {
-			// TODO what are my configs?
-			'foo': 'bar'
+			clickCallback: function(color) { },
+			mouseMoveCallback: function(color) { },
+			mouseOutCallback: function(color) { }
 		};
 
 		if (settings) $.extend(config, settings);
 		
-		this.each(function() {
-			// TODO make sure this is in image
-			$(this).load(function(){ 
+		// generate div for hover color floater
+		// TODO Q: Is there a better way to handle the hover chip? Make it optional? Configurable w/ a class?
+		$('body').append("<div id='jquery-dropper-hover-chip' style='width:10px; height: 10px; border: 1px solid #000; display:none'> </div>");
+
+		this.each(function(i) {
+			// make sure it's an image
+			if(this.tagName !== "IMG") {
+				return this;
+			};
+			
+			// Attach to load event to make sure we have the loaded image before we push it into a canvas
+			$(this).load(function(){
+				// Get width & height of image
 				var w = $(this).width();
 				var h = $(this).height();
-				var offset = $(this).offset();
 
-				// TODO come up with a better unique ID addressing system; do I need it at all?
-				$(this).after("<canvas id='dropper"+i+"' width='"+w+"' height='"+h+"'></canvas>")
-				var ctx = ($("#dropper"+i)[0]).getContext('2d');
-				ctx.drawImage($(this)[0],0,0);
-				var imageData=ctx.getImageData(0, 0, w, h);
+				// Use DOM methods to create the canvas element
+				// TODO Q: is there a to create & insert this element w/ jquery & get a DOM element reference w/o assigning an ID? This seems inelegant.
+				var imgElement = $(this)[0];
+				var containerElement = ($(this).parent())[0];
+				var canvasElement = document.createElement('canvas');
+        canvasElement.width = w;
+       	canvasElement.height = h;
+				containerElement.insertBefore(canvasElement,imgElement);
 
-				$("#dropper"+i).mousemove(function(e){
-					// var hoverX = e.pageX - offset.left;
-					// var hoverY = e.pageY - offset.top;
-					// var canvasIndex = (hoverX + hoverY * w) * 4;
-					var canvasIndex = canvasIndexFromClick(e,w,offset);
-					var r = imageData.data[canvasIndex];
-					var g = imageData.data[canvasIndex+1];
-					var b = imageData.data[canvasIndex+2];
-					var rgb = rgbToHex(r,g,b);
-					// TODO generate this once and only once; don't expect it to exist
-					// TODO callback w/ rgb & position
-					$('#color2').css({ 
-						'background-color': '#'+rgb, 
+				// Get canvas context, draw canvas, get image data		
+				// if fails we don't support canvas, so give up
+		    try {
+					var canvasContext = canvasElement.getContext('2d');
+					canvasContext.drawImage(imgElement,0,0);
+					var imageData=canvasContext.getImageData(0, 0, w, h);
+				}
+				catch(e) {
+					// canvas not supported
+					return this;
+				}
+
+				// mousemove (hover) event
+				$(canvasElement).mousemove(function(e){
+					var canvasIndex = canvasIndexFromEvent(e,$(this).width(),$(this).offset());
+					var color = colorFromData(canvasIndex,imageData.data);
+					
+					$('#jquery-dropper-hover-chip').css({ 
+						'background-color': '#'+color.rgbhex, 
 						'position': 'absolute',
 						'top': e.pageY-15, 
-						'left': e.pageX+10,
-						'display':'block'
-					});
-				}) // .mousemove
+						'left': e.pageX+10
+					}).show();
+
+					config.mouseMoveCallback(color);
+					
+				}) // /.mousemove
+
+				// mouseout event
 				.mouseout(function(e){
-					$('#color2').hide();
-					// TODO callback w/ rgb & position
-				}) // .mouseout
+					$('#jquery-dropper-hover-chip').hide();
+
+					var canvasIndex = canvasIndexFromEvent(e,$(this).width(),$(this).offset());
+					var color = colorFromData(canvasIndex,imageData.data);
+					
+					config.mouseOutCallback(color);
+					
+				}) // /.mouseout
+				
+				// click event
 				.click(function(e){
-					// var clickX = e.pageX - offset.left;
-					// var clickY = e.pageY - offset.top;
-					// var canvasIndex = (clickX + clickY * w) * 4;
-					var canvasIndex = canvasIndexFromClick(e,w,offset);
-					var r = imageData.data[canvasIndex];
-					var g = imageData.data[canvasIndex+1];
-					var b = imageData.data[canvasIndex+2];
-					var rgb = rgbToHex(r,g,b);
-					// TODO callback w/ rgb & position
-					$('#color1').css('background-color','#'+rgb);
+					var canvasIndex = canvasIndexFromEvent(e,$(this).width(),$(this).offset());
+					var color = colorFromData(canvasIndex,imageData.data);
+
+					config.clickCallback(color);
+
 					return false;
 				});
-				$(this).hide();
+				$(this).hide(); // hide the original image, since we've replaced it w/ a canvas element
+			});
+		  return this;
+		});
 
-      return this;
-    });
 
-  });
+		// helper functions
+		
+		// colorData: array containing canvas-style data for a pixel in order: r, g, b, alpha transparency
+		// return color object
+		var colorFromData = function(canvasIndex,data) {
+			var color = {
+				r: data[canvasIndex],
+				g: data[canvasIndex+1],
+				b: data[canvasIndex+2],
+				alpha: data[canvasIndex+3]
+			};
+			color.rgbhex = rgbToHex(color.r,color.g,color.b);
+			return color;
+		};
 
-	// local helper functions
-	
-	// e: click event object
-	// w: width of canvas element
-	// offset: canvas selement offset object
-	// returns canvas index
-	var canvasIndexFromClick = function(e,w,offset) {
-		var x = e.pageX - offset.left;
-		var y = e.pageY - offset.top;
-		return (x + y * w) * 4;		
-	}
-	
-	// i: color channel value, integer 0-255
-	// returns two byte hex representation of a color channel (00-FF)
-	var toHex = function(i) {
-		var str = i.toString(16);
-		while(str.length < 2) { str = '0' + str; }
-		return str;
-	}
-	// r,g,b: color channel value, integer 0-255
-	// returns six byte hex representation of a color
-	var rgbToHex = function(r,g,b) {
-		return toHex(r)+toHex(g)+toHex(b);
-	}
+		// e: click event object
+		// w: width of canvas element
+		// offset: canvas selement offset object
+		// returns canvas index
+		var canvasIndexFromEvent = function(e,w,offset) {
+			var x = e.pageX - parseInt(offset.left);
+			var y = e.pageY - parseInt(offset.top);
+			return (x + y * w) * 4;		
+		};
+
+		// i: color channel value, integer 0-255
+		// returns two character string hex representation of a color channel (00-FF)
+		var toHex = function(i) {
+			if(i === undefined) return 'FF'; // TODO this shouldn't happen; looks like offset/x/y might be off by one
+			var str = i.toString(16);
+			while(str.length < 2) { str = '0' + str; }
+			return str;
+		};
+		
+		// r,g,b: color channel value, integer 0-255
+		// returns six character string hex representation of a color
+		var rgbToHex = function(r,g,b) {
+			return toHex(r)+toHex(g)+toHex(b);
+		};
+
+  };
 
 })(jQuery);

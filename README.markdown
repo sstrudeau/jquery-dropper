@@ -69,6 +69,6 @@ The demo uses three image from Flickr.  Each is licensed as [Creative Commons, A
 
 ## License
 
-Dual licensed under the [MIT License](http://www.opensource.org/licenses/mit-license.php) and the [GPL license](http://www.gnu.org/licenses/gpl.html):
+Dual licensed under the [MIT License](http://www.opensource.org/licenses/mit-license.php) and the [GPL license](http://www.gnu.org/licenses/gpl.html)
 
 Copyright (c) 2009, Scott Trudeau (scott.trudeau@gmail.com)

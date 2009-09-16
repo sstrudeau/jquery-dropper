@@ -6,15 +6,11 @@ This jQuery plugin uses the HTML5 canvas element to create an "eyedropper"-style
 
 ### Internet Explorer Not Supported
 
-Internet Explorer does not support the HTML5 canvas element natively.  The popular VML hack for simulating canvas in IE will not work.  VML does not give pixel-level access to images.
-
-See this thread: http://groups.google.com/group/google-excanvas/browse_thread/thread/7d35fa72dbe1487b
+Internet Explorer does not support the HTML5 canvas element natively.  The popular VML hack for simulating canvas in IE will not work.  VML does not give pixel-level access to images.  [See this thread](http://groups.google.com/group/google-excanvas/browse_thread/thread/7d35fa72dbe1487b)
 
 ### Images must be in same domain as the web page
 
-In order to get pixel-level access to the image, the image must be hosted on the same domain as the web page. This is a canvas security requirement.
-
-See the HTML5 spec: http://dev.w3.org/html5/spec/Overview.html#security-with-canvas-elements
+In order to get pixel-level access to the image, the image must be hosted on the same domain as the web page. See the [canvas security section of the HTML5 spec](http://dev.w3.org/html5/spec/Overview.html#security-with-canvas-elements)
 
 TODO: Test redirect proxy as a possible workaround
 
@@ -46,15 +42,15 @@ The color object has has 5 attributes: r, g, b and alpha which are 0-255 integer
 
 Example:
 
-		<script type="text/javascript" charset="utf-8">
-			jQuery(document).ready(function() {
-				jQuery('img.dropper').dropper({
-					clickCallback: function(color) {
-						alert("You clicked on color: #"+ color.rgbhex);
-					};
-				});
-			});			
-		</script>
+    <script type="text/javascript" charset="utf-8">
+    	jQuery(document).ready(function() {
+    		jQuery('img.dropper').dropper({
+    			clickCallback: function(color) {
+    				alert("You clicked on color: #"+ color.rgbhex);
+    			};
+    		});
+    	});			
+    </script>
 
 See the included "demo" folder for a simple, more practical example.
 

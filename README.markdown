@@ -32,13 +32,12 @@ This will replace all img elements with a 'class' of 'dropper' with a canvas ele
 ## Callbacks
 
 The plugin offers three callback methods that can be passed to the .dropper() method:
+
 * clickCallback
 * mouseMoveCallback
 * mouseOutCallback
 
-Each callback is called with a single argument, which is a simple "color" of the color of the pixel under the mouse. 
-
-The color object has has 5 attributes: r, g, b and alpha which are 0-255 integers for the "red", "green", "blue" and "alpha transparency" channel of the image. And "rgbhex" which is the 6 character hexadecimal representation of the color.
+Each callback is called with a single argument, a color object.  The color object has has 5 attributes: r, g, b and alpha which are 0-255 integers for the "red", "green", "blue" and "alpha transparency" channel of the image. And "rgbhex" which is the 6 character hexadecimal representation of the color.
 
 Example:
 
@@ -63,6 +62,7 @@ TODO: pass more args back to callbacks; investigate callback naming conventions,
 ## Demo Image Credits
 
 The demo uses three image from Flickr.  Each is licensed as [Creative Commons, Attribution-Share Alike 2.0](http://creativecommons.org/licenses/by-sa/2.0/deed.en)
+
 * [Colorful Glass](http://www.flickr.com/photos/lexrex/447627949/) by [lexrex](http://www.flickr.com/photos/lexrex)
 * [The only way to see the rainbow is to look through the rain!](http://www.flickr.com/photos/somogyibarbara/3229357802/) by [somogyibarbara](http://www.flickr.com/photos/somogyibarbara/)
 * [Colorful tulips](http://www.flickr.com/photos/deapeajay/2399982682/) by [deapeajay](http://www.flickr.com/photos/deapeajay/)

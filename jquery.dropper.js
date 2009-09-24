@@ -28,25 +28,24 @@
 			if(this.tagName !== "IMG") {
 				return this;
 			};
-			
-			// Attach to load event to make sure we have the loaded image before we push it into a canvas
-			$(this).load(function(){
-				// Get width & height of image
-				var w = $(this).width();
-				var h = $(this).height();
+			var w = $(this).width();
+			var h = $(this).height();
+			// Thanks to alistair potts: http://groups.google.com/group/jquery-dev/browse_thread/thread/eee6ab7b2da50e1f
+			// use load & readystatechange AND this.src=src trick to make sure this always fires after the image is loaded
 
+			$(this).bind('load readystatechange', function(e){
+				// Get width & height of image
 				// Use DOM methods to create the canvas element
 				// TODO Q: is there a to create & insert this element w/ jquery & get a DOM element reference w/o assigning an ID? This seems inelegant.
 				var imgElement = $(this)[0];
 				var containerElement = ($(this).parent())[0];
 				var canvasElement = document.createElement('canvas');
-        canvasElement.width = w;
-       	canvasElement.height = h;
+				canvasElement.width = w;
+				canvasElement.height = h;
 				containerElement.insertBefore(canvasElement,imgElement);
-
 				// Get canvas context, draw canvas, get image data		
 				// if fails we don't support canvas, so give up
-		    try {
+				try {
 					var canvasContext = canvasElement.getContext('2d');
 					canvasContext.drawImage(imgElement,0,0);
 					var imageData=canvasContext.getImageData(0, 0, w, h);
@@ -56,11 +55,13 @@
 					return this;
 				}
 
+				$(this).hide(); // hide the original image, since we've replaced it w/ a canvas element
+
 				// mousemove (hover) event
 				$(canvasElement).mousemove(function(e){
 					var canvasIndex = canvasIndexFromEvent(e,$(this).width(),$(this).offset());
 					var color = colorFromData(canvasIndex,imageData.data);
-					
+
 					$('#jquery-dropper-hover-chip').css({ 
 						'background-color': '#'+color.rgbhex, 
 						'position': 'absolute',
@@ -69,7 +70,7 @@
 					}).show();
 
 					config.mouseMoveCallback(color);
-					
+
 				}) // /.mousemove
 
 				// mouseout event
@@ -78,11 +79,11 @@
 
 					var canvasIndex = canvasIndexFromEvent(e,$(this).width(),$(this).offset());
 					var color = colorFromData(canvasIndex,imageData.data);
-					
+
 					config.mouseOutCallback(color);
-					
+
 				}) // /.mouseout
-				
+
 				// click event
 				.click(function(e){
 					var canvasIndex = canvasIndexFromEvent(e,$(this).width(),$(this).offset());
@@ -92,10 +93,13 @@
 
 					return false;
 				});
-				$(this).hide(); // hide the original image, since we've replaced it w/ a canvas element
-			});
+			}); // .load()
+			// force load/readystatechange to trigger (see above)
+			var src = this.src;
+			this.src = '#';
+			this.src = src;
 		  return this;
-		});
+		}); // .each()
 
 
 		// helper functions

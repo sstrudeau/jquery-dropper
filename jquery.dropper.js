@@ -1,7 +1,7 @@
 /*
 * jQuery dropper plug-in
 *
-* Copyright 2009 Scott Trudeau
+* Copyright 2010 Scott Trudeau
 * 
 * Dual licensed under the MIT and GPL licenses:
 * http://www.opensource.org/licenses/mit-license.php

@@ -59,6 +59,10 @@ TODO: pass more args back to callbacks; investigate callback naming conventions,
 
 [Scott Trudeau](http://sstrudeau.com) ([@sstrudeau](http://twitter.com/sstrudeau)) for [Apartment Therapy](http://www.apartmenttherapy.com)
 
+## See Also
+
+Favonius' fork: [dropperredux](http://www.kevembuangga.com/dropperredux/)
+
 ## Demo Image Credits
 
 The demo uses three image from Flickr.  Each is licensed as [Creative Commons, Attribution-Share Alike 2.0](http://creativecommons.org/licenses/by-sa/2.0/deed.en)
@@ -71,4 +75,4 @@ The demo uses three image from Flickr.  Each is licensed as [Creative Commons, A
 
 Dual licensed under the [MIT License](http://www.opensource.org/licenses/mit-license.php) and the [GPL license](http://www.gnu.org/licenses/gpl.html)
 
-Copyright (c) 2009, Scott Trudeau (scott.trudeau@gmail.com)
+Copyright (c) 2010, Scott Trudeau (scott.trudeau@gmail.com)

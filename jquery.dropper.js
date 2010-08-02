@@ -28,13 +28,15 @@
 			if(this.tagName !== "IMG") {
 				return this;
 			};
-			var w = $(this).width();
-			var h = $(this).height();
+			// var w = $(this).width();
+			// var h = $(this).height();
 			// Thanks to alistair potts: http://groups.google.com/group/jquery-dev/browse_thread/thread/eee6ab7b2da50e1f
 			// use load & readystatechange AND this.src=src trick to make sure this always fires after the image is loaded
 
 			$(this).bind('load readystatechange', function(e){
 				// Get width & height of image
+				var w = $(this).width();
+				var h = $(this).height();
 				// Use DOM methods to create the canvas element
 				// TODO Q: is there a to create & insert this element w/ jquery & get a DOM element reference w/o assigning an ID? This seems inelegant.
 				var imgElement = $(this)[0];
